@@ -121,6 +121,67 @@ class ForkSimulation:
         plt.grid(True)
         plt.show()
 
+    def plot_steady_state_vibration(self, force_amplitude: float, frequency: float, duration: float = 2.0):
+        """Plot steady-state vibration response to a sinusoidal force"""
+        t = np.linspace(0, duration, 1000)
+        omega = 2 * np.pi * frequency
+        omega_n = 2 * np.pi * self.natural_frequency()
+        c = self.damping_coefficient()
+        k = self.material.E_axial * self.geometry.moment_of_inertia / self.geometry.length**3
+        
+        # Steady-state response
+        H = 1 / (k - self.mass * omega**2 + 1j * c * omega)
+        phase = np.angle(H)
+        amplitude = np.abs(H) * force_amplitude
+        
+        # Input force and response
+        force = force_amplitude * np.sin(omega * t)
+        response = amplitude * np.sin(omega * t + phase)
+        
+        plt.figure(figsize=(12, 8))
+        plt.subplot(2, 1, 1)
+        plt.plot(t, force, label='Input Force')
+        plt.xlabel('Time (s)')
+        plt.ylabel('Force (N)')
+        plt.title('Input Force')
+        plt.grid(True)
+        plt.legend()
+        
+        plt.subplot(2, 1, 2)
+        plt.plot(t, response * 1000, label='Response')  # Convert to mm
+        plt.xlabel('Time (s)')
+        plt.ylabel('Displacement (mm)')
+        plt.title('Steady-State Response')
+        plt.grid(True)
+        plt.legend()
+        plt.tight_layout()
+        plt.show()
+
+    def plot_step_response(self, force_amplitude: float, duration: float = 2.0):
+        """Plot step response of the fork to a sudden force application"""
+        t = np.linspace(0, duration, 1000)
+        omega_n = 2 * np.pi * self.natural_frequency()
+        zeta = self.material.damping_ratio
+        c = self.damping_coefficient()
+        k = self.material.E_axial * self.geometry.moment_of_inertia / self.geometry.length**3
+        
+        # Step response for underdamped system (zeta < 1)
+        if zeta < 1:
+            omega_d = omega_n * np.sqrt(1 - zeta**2)
+            response = (force_amplitude/k) * (1 - np.exp(-zeta * omega_n * t) * 
+                    (np.cos(omega_d * t) + (zeta * omega_n/omega_d) * np.sin(omega_d * t)))
+        else:
+            # Critically damped or overdamped
+            response = (force_amplitude/k) * (1 - np.exp(-omega_n * t) * (1 + omega_n * t))
+        
+        plt.figure(figsize=(10, 6))
+        plt.plot(t, response * 1000)  # Convert to mm
+        plt.xlabel('Time (s)')
+        plt.ylabel('Displacement (mm)')
+        plt.title('Step Response')
+        plt.grid(True)
+        plt.show()
+
 # Example usage
 if __name__ == "__main__":
     # Example material properties (Carbon Fiber)
@@ -151,4 +212,8 @@ if __name__ == "__main__":
     
     # Example analysis
     fork.plot_stress_distribution(axial_force=1000, transverse_force=500)  # 1000N axial, 500N transverse
-    fork.plot_frequency_response(force_amplitude=100, frequency_range=(0, 100))  # 100N force, 0-100Hz range 
+    fork.plot_frequency_response(force_amplitude=100, frequency_range=(0, 100))  # 100N force, 0-100Hz range
+    
+    # Time domain analysis
+    fork.plot_steady_state_vibration(force_amplitude=100, frequency=10)  # 100N at 10Hz
+    fork.plot_step_response(force_amplitude=100)  # 100N step force 
