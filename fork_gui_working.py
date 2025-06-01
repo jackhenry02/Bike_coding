@@ -6,38 +6,6 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from composite_layup import PlyProperties, CompositeLayup, create_symmetric_layup
 from fork_simulation import MaterialProperties, ForkGeometry, ForkSimulation
 
-class PlyPropertiesFrame(ttk.LabelFrame):
-    def __init__(self, parent, ply_number, *args, **kwargs):
-        super().__init__(parent, text=f"Ply {ply_number}", *args, **kwargs)
-        self.ply_number = ply_number
-        
-        # Ply properties inputs
-        properties = [
-            ("E11 (GPa):", "e11", 138),
-            ("E22 (GPa):", "e22", 9),
-            ("nu12:", "nu12", 0.3),
-            ("G12 (GPa):", "g12", 6.9),
-            ("Thickness (mm):", "thickness", 0.1),
-            ("Orientation (deg):", "orientation", 0)
-        ]
-        
-        self.vars = {}
-        for i, (label, name, default) in enumerate(properties):
-            ttk.Label(self, text=label).grid(row=i, column=0, padx=5, pady=2, sticky='e')
-            var = tk.DoubleVar(value=default)
-            self.vars[name] = var
-            ttk.Entry(self, textvariable=var, width=10).grid(row=i, column=1, padx=5, pady=2)
-    
-    def get_properties(self) -> PlyProperties:
-        return PlyProperties(
-            E11=self.vars['e11'].get(),
-            E22=self.vars['e22'].get(),
-            nu12=self.vars['nu12'].get(),
-            G12=self.vars['g12'].get(),
-            thickness=self.vars['thickness'].get(),
-            orientation=self.vars['orientation'].get()
-        )
-
 class ForkSimulationGUI:
     def __init__(self, root):
         self.root = root
@@ -60,124 +28,44 @@ class ForkSimulationGUI:
         # Store current layup and simulation
         self.current_layup = None
         self.current_simulation = None
-        self.ply_frames = []
         
     def setup_layup_tab(self):
-        # Top frame for layup configuration
-        top_frame = ttk.Frame(self.layup_tab)
-        top_frame.pack(fill='x', padx=5, pady=5)
+        # Left frame for ply properties
+        left_frame = ttk.LabelFrame(self.layup_tab, text="Ply Properties")
+        left_frame.pack(side='left', fill='both', expand=True, padx=5, pady=5)
         
-        # Number of plies input
-        ttk.Label(top_frame, text="Number of Plies:").pack(side='left', padx=5)
-        self.num_plies_var = tk.IntVar(value=4)
-        num_plies_entry = ttk.Entry(top_frame, textvariable=self.num_plies_var, width=5)
-        num_plies_entry.pack(side='left', padx=5)
+        # Ply properties inputs
+        properties = [
+            ("E11 (GPa):", "e11", 138),
+            ("E22 (GPa):", "e22", 9),
+            ("nu12:", "nu12", 0.3),
+            ("G12 (GPa):", "g12", 6.9),
+            ("Thickness (mm):", "thickness", 0.1)
+        ]
         
-        # Layup type selection
-        ttk.Label(top_frame, text="Layup Type:").pack(side='left', padx=5)
-        self.layup_type_var = tk.StringVar(value="symmetric")
-        ttk.Radiobutton(top_frame, text="Symmetric", variable=self.layup_type_var, 
-                       value="symmetric", command=self.update_ply_frames).pack(side='left', padx=5)
-        ttk.Radiobutton(top_frame, text="Asymmetric", variable=self.layup_type_var,
-                       value="asymmetric", command=self.update_ply_frames).pack(side='left', padx=5)
+        self.ply_vars = {}
+        for i, (label, name, default) in enumerate(properties):
+            ttk.Label(left_frame, text=label).grid(row=i, column=0, padx=5, pady=2, sticky='e')
+            var = tk.DoubleVar(value=default)
+            self.ply_vars[name] = var
+            ttk.Entry(left_frame, textvariable=var, width=10).grid(row=i, column=1, padx=5, pady=2)
         
-        # Update button
-        ttk.Button(top_frame, text="Update Ply Configuration", 
-                  command=self.update_ply_frames).pack(side='left', padx=20)
+        # Orientation inputs
+        ttk.Label(left_frame, text="Orientations (degrees):").grid(row=len(properties), column=0, padx=5, pady=5, sticky='e')
+        self.orientations_var = tk.StringVar(value="0,45,-45,0")
+        ttk.Entry(left_frame, textvariable=self.orientations_var, width=20).grid(row=len(properties), column=1, padx=5, pady=5)
         
         # Create layup button
-        ttk.Button(top_frame, text="Create Layup", 
-                  command=self.create_layup).pack(side='right', padx=20)
-        
-        # Main content frame
-        content_frame = ttk.Frame(self.layup_tab)
-        content_frame.pack(fill='both', expand=True, padx=5, pady=5)
-        
-        # Left frame for ply properties
-        self.left_frame = ttk.Frame(content_frame)
-        self.left_frame.pack(side='left', fill='both', expand=True)
+        ttk.Button(left_frame, text="Create Layup", command=self.create_layup).grid(row=len(properties)+1, column=0, columnspan=2, pady=10)
         
         # Right frame for results
-        right_frame = ttk.LabelFrame(content_frame, text="Effective Properties")
+        right_frame = ttk.LabelFrame(self.layup_tab, text="Effective Properties")
         right_frame.pack(side='right', fill='both', expand=True, padx=5, pady=5)
         
         # Results display
         self.results_text = tk.Text(right_frame, height=10, width=40)
         self.results_text.pack(padx=5, pady=5, fill='both', expand=True)
         
-        # Initialize ply frames
-        self.update_ply_frames()
-        
-    def update_ply_frames(self):
-        # Clear existing ply frames
-        for frame in self.ply_frames:
-            frame.destroy()
-        self.ply_frames.clear()
-        
-        # Get number of plies
-        num_plies = self.num_plies_var.get()
-        is_symmetric = self.layup_type_var.get() == "symmetric"
-        
-        # Calculate actual number of frames needed
-        if is_symmetric:
-            num_frames = (num_plies + 1) // 2
-        else:
-            num_frames = num_plies
-        
-        # Create new ply frames
-        for i in range(num_frames):
-            frame = PlyPropertiesFrame(self.left_frame, i + 1)
-            frame.grid(row=i, column=0, padx=5, pady=5, sticky='nsew')
-            self.ply_frames.append(frame)
-            
-            if is_symmetric and i == num_frames - 1 and num_plies % 2 == 0:
-                # Add a note for middle ply in symmetric layup
-                ttk.Label(self.left_frame, 
-                         text="(Middle ply - will be duplicated)").grid(
-                             row=i, column=1, padx=5, pady=5, sticky='w')
-    
-    def create_layup(self):
-        try:
-            # Get ply properties
-            plies = []
-            for frame in self.ply_frames:
-                plies.append(frame.get_properties())
-            
-            # Create layup based on type
-            if self.layup_type_var.get() == "symmetric":
-                # For symmetric layup, mirror the plies
-                num_plies = self.num_plies_var.get()
-                if num_plies % 2 == 0:
-                    # Even number of plies
-                    plies = plies + plies[::-1]
-                else:
-                    # Odd number of plies
-                    plies = plies[:-1] + plies[::-1]
-            
-            # Create layup
-            self.current_layup = CompositeLayup(plies)
-            effective_props = self.current_layup.calculate_effective_properties()
-            
-            # Display results
-            self.results_text.delete(1.0, tk.END)
-            self.results_text.insert(tk.END, f"Effective Laminate Properties:\n")
-            self.results_text.insert(tk.END, f"E_x: {effective_props['E_x']:.2f} GPa\n")
-            self.results_text.insert(tk.END, f"E_y: {effective_props['E_y']:.2f} GPa\n")
-            self.results_text.insert(tk.END, f"nu_xy: {effective_props['nu_xy']:.3f}\n")
-            self.results_text.insert(tk.END, f"G_xy: {effective_props['G_xy']:.2f} GPa\n")
-            self.results_text.insert(tk.END, f"Total thickness: {effective_props['thickness']:.2f} mm\n")
-            
-            # Add layup sequence
-            self.results_text.insert(tk.END, f"\nLayup Sequence:\n")
-            for i, ply in enumerate(plies):
-                self.results_text.insert(tk.END, 
-                    f"Ply {i+1}: {ply.orientation}° (E11={ply.E11/1e9:.1f} GPa, t={ply.thickness*1000:.2f} mm)\n")
-            
-            messagebox.showinfo("Success", "Layup created successfully!")
-            
-        except Exception as e:
-            messagebox.showerror("Error", f"Failed to create layup: {str(e)}")
-    
     def setup_simulation_tab(self):
         # Left frame for simulation parameters
         left_frame = ttk.LabelFrame(self.simulation_tab, text="Simulation Parameters")
@@ -229,6 +117,39 @@ class ForkSimulationGUI:
         self.plot_frame = ttk.LabelFrame(self.simulation_tab, text="Results")
         self.plot_frame.pack(side='right', fill='both', expand=True, padx=5, pady=5)
         
+    def create_layup(self):
+        try:
+            # Get ply properties
+            ply_props = PlyProperties(
+                E11=self.ply_vars['e11'].get(),
+                E22=self.ply_vars['e22'].get(),
+                nu12=self.ply_vars['nu12'].get(),
+                G12=self.ply_vars['g12'].get(),
+                thickness=self.ply_vars['thickness'].get(),
+                orientation=0  # Will be set in layup
+            )
+            
+            # Get orientations
+            orientations = [float(x.strip()) for x in self.orientations_var.get().split(',')]
+            
+            # Create layup
+            self.current_layup = create_symmetric_layup(ply_props, orientations)
+            effective_props = self.current_layup.calculate_effective_properties()
+            
+            # Display results
+            self.results_text.delete(1.0, tk.END)
+            self.results_text.insert(tk.END, f"Effective Laminate Properties:\n")
+            self.results_text.insert(tk.END, f"E_x: {effective_props['E_x']:.2f} GPa\n")
+            self.results_text.insert(tk.END, f"E_y: {effective_props['E_y']:.2f} GPa\n")
+            self.results_text.insert(tk.END, f"nu_xy: {effective_props['nu_xy']:.3f}\n")
+            self.results_text.insert(tk.END, f"G_xy: {effective_props['G_xy']:.2f} GPa\n")
+            self.results_text.insert(tk.END, f"Total thickness: {effective_props['thickness']:.2f} mm\n")
+            
+            messagebox.showinfo("Success", "Layup created successfully!")
+            
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to create layup: {str(e)}")
+    
     def run_stress_analysis(self):
         if not self.current_layup:
             messagebox.showerror("Error", "Please create a layup first!")
