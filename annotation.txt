@@ -23,3 +23,7 @@ Basic properties (mass, cost, natural frequency)
 A stress distribution plot showing axial, bending, and total stress
 A frequency response plot showing the fork's response to dynamic loading
 You can modify the forces, geometry, and material properties to see how they affect the fork's behavior. Want to try different parameters or add more analysis features?
+
+
+
+https://doi.org/
