@@ -85,14 +85,30 @@ class CompositeLayup:
     
     def calculate_effective_properties(self) -> dict:
         """Calculate the effective engineering properties of the laminate"""
-        A, _, _ = self.calculate_ABD_matrices()
+        A, B, D = self.calculate_ABD_matrices()
         h = self.total_thickness
         
-        # Calculate effective moduli
-        E_x = (A[0,0] * A[1,1] - A[0,1]**2) / (h * A[1,1])
-        E_y = (A[0,0] * A[1,1] - A[0,1]**2) / (h * A[0,0])
-        nu_xy = A[0,1] / A[1,1]
-        G_xy = A[2,2] / h
+        # Create the full ABD matrix
+        ABD = np.block([
+            [A, B],
+            [B, D]
+        ])
+        
+        # Calculate compliance matrix
+        S = np.linalg.inv(ABD)
+        
+        # For unsymmetric laminates, use compliance matrix approach
+        # Extract the in-plane compliance terms (S11, S12, S22, S66)
+        S11 = S[0,0]
+        S12 = S[0,1]
+        S22 = S[1,1]
+        S66 = S[2,2]
+        
+        # Calculate effective properties using compliance matrix
+        E_x = 1 / (h * S11)
+        E_y = 1 / (h * S22)
+        nu_xy = -S12 / S11
+        G_xy = 1 / (h * S66)
         
         return {
             'E_x': E_x / 1e9,  # Convert back to GPa

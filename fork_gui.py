@@ -3,7 +3,7 @@ from tkinter import ttk, messagebox, filedialog
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from composite_layup import PlyProperties, CompositeLayup, create_symmetric_layup
+from composite_analysis import PlyProperties, CompositeAnalysis, create_symmetric_layup
 from fork_simulation import MaterialProperties, ForkGeometry, ForkSimulation
 import json
 import os
@@ -109,6 +109,12 @@ class ForkSimulationGUI:
         self.material_properties = {}
         self.load_material_properties()
         
+        # Add thermal and moisture analysis options
+        self.thermal_vars = {
+            'delta_T': tk.DoubleVar(value=0.0),  # Temperature change (°C)
+            'delta_C': tk.DoubleVar(value=0.0)   # Moisture change (%)
+        }
+        
     def setup_layup_tab(self):
         # Top frame for layup configuration
         top_frame = ttk.Frame(self.layup_tab)
@@ -201,8 +207,8 @@ class ForkSimulationGUI:
                     # Odd number of plies
                     plies = plies[:-1] + plies[::-1]
             
-            # Create layup
-            self.current_layup = CompositeLayup(plies)
+            # Create layup using new analysis code
+            self.current_layup = CompositeAnalysis(plies)
             effective_props = self.current_layup.calculate_effective_properties()
             
             # Display results
@@ -213,12 +219,24 @@ class ForkSimulationGUI:
             self.results_text.insert(tk.END, f"nu_xy: {effective_props['nu_xy']:.3f}\n")
             self.results_text.insert(tk.END, f"G_xy: {effective_props['G_xy']:.2f} GPa\n")
             self.results_text.insert(tk.END, f"Total thickness: {effective_props['thickness']:.2f} mm\n")
+            self.results_text.insert(tk.END, f"Density: {effective_props['density']:.1f} kg/m³\n")
+            
+            # Add thermal and moisture properties if available
+            if effective_props.get('thermal_expansion_x'):
+                self.results_text.insert(tk.END, f"\nThermal Properties:\n")
+                self.results_text.insert(tk.END, f"αx: {effective_props['thermal_expansion_x']:.2e} /°C\n")
+                self.results_text.insert(tk.END, f"αy: {effective_props['thermal_expansion_y']:.2e} /°C\n")
+            
+            if effective_props.get('moisture_expansion_x'):
+                self.results_text.insert(tk.END, f"\nMoisture Properties:\n")
+                self.results_text.insert(tk.END, f"βx: {effective_props['moisture_expansion_x']:.2e} /%\n")
+                self.results_text.insert(tk.END, f"βy: {effective_props['moisture_expansion_y']:.2e} /%\n")
             
             # Add layup sequence
             self.results_text.insert(tk.END, f"\nLayup Sequence:\n")
             for i, ply in enumerate(plies):
                 self.results_text.insert(tk.END, 
-                    f"Ply {i+1}: {ply.orientation}° (E11={ply.E11/1e9:.1f} GPa, t={ply.thickness*1000:.2f} mm)\n")
+                    f"Ply {i+1}: {ply.orientation}° (E11={ply.E11:.1f} GPa, t={ply.thickness:.2f} mm)\n")
             
             messagebox.showinfo("Success", "Layup created successfully!")
             
@@ -291,7 +309,7 @@ class ForkSimulationGUI:
                 E_transverse=effective_props['E_y'],
                 G=effective_props['G_xy'],
                 nu=effective_props['nu_xy'],
-                rho=1600,  # Assuming density
+                rho=effective_props['density'],
                 cost_per_kg=50,  # Assuming cost
                 damping_ratio=0.01
             )
@@ -310,9 +328,53 @@ class ForkSimulationGUI:
             axial_force = self.load_vars['axial_force'].get()
             transverse_force = self.load_vars['transverse_force'].get()
             
-            # Create figure
-            fig = plt.figure(figsize=(8, 6))
-            self.current_simulation.plot_stress_distribution(axial_force, transverse_force)
+            # Calculate laminate stresses
+            loads = {
+                'Nx': axial_force / (2 * np.pi * geometry.outer_diameter),  # Convert to N/m
+                'Ny': 0,
+                'Nxy': 0,
+                'Mx': transverse_force * geometry.length / 4,  # Approximate moment
+                'My': 0,
+                'Mxy': 0
+            }
+            
+            stress_strain = self.current_layup.calculate_stress_strain(loads)
+            failure = self.current_layup.calculate_failure(loads)
+            
+            # Create figure with subplots
+            fig = plt.figure(figsize=(12, 8))
+            
+            # Plot stress distribution
+            plt.subplot(2, 1, 1)
+            x = np.linspace(0, geometry.length, 100)
+            axial_stress = np.full_like(x, self.current_simulation.axial_stress(axial_force))
+            bending_stress = self.current_simulation.bending_stress(transverse_force, x)
+            total_stress = axial_stress + bending_stress
+            
+            plt.plot(x, axial_stress/1e6, label='Axial Stress')
+            plt.plot(x, bending_stress/1e6, label='Bending Stress')
+            plt.plot(x, total_stress/1e6, label='Total Stress')
+            plt.xlabel('Distance from base (m)')
+            plt.ylabel('Stress (MPa)')
+            plt.title('Stress Distribution Along Fork')
+            plt.legend()
+            plt.grid(True)
+            
+            # Plot through-thickness stress distribution
+            plt.subplot(2, 1, 2)
+            z = np.linspace(-self.current_layup.total_thickness/2, 
+                           self.current_layup.total_thickness/2, 
+                           len(stress_strain['stresses']))
+            plt.plot(stress_strain['stresses'][:,0]/1e6, z, label='σx')
+            plt.plot(stress_strain['stresses'][:,1]/1e6, z, label='σy')
+            plt.plot(stress_strain['stresses'][:,2]/1e6, z, label='τxy')
+            plt.xlabel('Stress (MPa)')
+            plt.ylabel('Through-thickness position (mm)')
+            plt.title('Through-thickness Stress Distribution')
+            plt.legend()
+            plt.grid(True)
+            
+            plt.tight_layout()
             
             # Clear previous plot
             for widget in self.plot_frame.winfo_children():
@@ -322,6 +384,14 @@ class ForkSimulationGUI:
             canvas = FigureCanvasTkAgg(fig, master=self.plot_frame)
             canvas.draw()
             canvas.get_tk_widget().pack(fill='both', expand=True)
+            
+            # Add failure analysis results
+            self.results_text.insert(tk.END, f"\nFailure Analysis:\n")
+            self.results_text.insert(tk.END, f"Maximum Failure Index: {failure['max_failure_index']:.3f}\n")
+            if failure['failed_plies']:
+                self.results_text.insert(tk.END, f"Failed Plies: {failure['failed_plies']}\n")
+            else:
+                self.results_text.insert(tk.END, "No ply failures predicted\n")
             
         except Exception as e:
             messagebox.showerror("Error", f"Failed to run stress analysis: {str(e)}")
