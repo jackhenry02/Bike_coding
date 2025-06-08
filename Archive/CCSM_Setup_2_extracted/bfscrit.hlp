@@ -1,0 +1,4 @@
+BFS Failure Criteria
+
+Failure is assumed to occur in the 0 degree plies - the BFS criterion should not be used if off-axis plies could fail first (this could be checked using conventional failure criteria). The weakest such ply or plies are identified in the ply arrangement box. Where the unnotched strength is to be predicted this is calculated using the given failure criterion and strength data. The notched strength of the composite is then calculated, giving the longitudinal (axial) stress or strain of the laminate at failure and the length of the microbuckled region emanating from the end of the notch at this critical failure load. Refer to the manual for references explaining the theory in more detail.
+

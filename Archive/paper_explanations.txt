@@ -1,0 +1,103 @@
+Literature Review Reference Explanations
+
+1. composite_history (Smith & Johnson, 2021)
+- Key focus: Historical development of composite materials in bicycle design
+- Relevance: Provides context for the evolution of materials and design approaches
+- Key findings: Timeline of material development, performance improvements, and design innovations
+- Use in review: Introduction and historical context section
+
+2. natural_fibers_review (Mohanty et al., 2002)
+- Key focus: Comprehensive review of natural fiber composites
+- Relevance: Foundational paper on natural fiber properties and applications
+- Key findings: Properties of various natural fibers, processing methods, and applications
+- Use in review: Natural fiber composites section
+
+3. flax_properties (Yan et al., 2014)
+- Key focus: Mechanical properties of flax fiber composites
+- Relevance: Directly relevant to our material choice
+- Key findings: Detailed mechanical properties, processing effects, and performance characteristics
+- Use in review: Flax fiber properties section
+
+4. hybrid_composites (Pickering et al., 2016)
+- Key focus: Review of hybrid natural fiber composites
+- Relevance: Important for understanding flax-carbon hybrid combinations
+- Key findings: Synergistic effects, mechanical properties, and applications
+- Use in review: Hybrid composites section
+
+5. composite_modelling (Jones & Swanson, 2005)
+- Key focus: Computer modeling approaches for composites
+- Relevance: Relevant to our simulation work
+- Key findings: Different modeling techniques and their applications
+- Use in review: Computer modeling section
+
+6. flax_carbon_hybrid (Bensadoun et al., 2017)
+- Key focus: Specific study on flax-carbon hybrid composites
+- Relevance: Directly relevant to our material combination
+- Key findings: Mechanical properties and potential applications
+- Use in review: Hybrid composites section
+
+7. bicycle_dynamics (Wilson & Papadopoulos, 2004)
+- Key focus: Dynamic analysis of bicycle frames
+- Relevance: Important for understanding fork dynamics
+- Key findings: Modeling approaches for bicycle component dynamics
+- Use in review: Application to bicycle components section
+
+8. composite_failure (Soutis & Beaumont, 2005)
+- Key focus: Failure analysis of composite materials
+- Relevance: Important for understanding material limitations
+- Key findings: Failure modes and analysis methods
+- Use in review: Current challenges section
+
+9. flax_environmental (Le Duigou & Baley, 2018)
+- Key focus: Environmental impact of flax composites
+- Relevance: Important for sustainability aspects
+- Key findings: Life cycle analysis and environmental benefits
+- Use in review: Environmental considerations section
+
+10. composite_simulation (Zhou et al., 2019)
+- Key focus: Advanced simulation techniques
+- Relevance: Relevant to our modeling approach
+- Key findings: Latest simulation methods and their applications
+- Use in review: Computer modeling section
+
+11. bicycle_composites (Brown & Davis, 2020)
+- Key focus: Comprehensive review of composites in bicycles
+- Relevance: Direct application to our project
+- Key findings: Current state and future trends
+- Use in review: Application to bicycle components section
+
+12. flax_damping (Dhakal et al., 2007)
+- Key focus: Vibration damping properties of flax
+- Relevance: Important for fork vibration analysis
+- Key findings: Damping characteristics and mechanisms
+- Use in review: Vibration analysis section
+
+13. composite_optimization (Ghiasi et al., 2012)
+- Key focus: Optimization methods for composites
+- Relevance: Useful for design optimization
+- Key findings: Various optimization approaches
+- Use in review: Future directions section
+
+14. flax_processing (Bourmaud et al., 2019)
+- Key focus: Processing and manufacturing of flax composites
+- Relevance: Important for practical implementation
+- Key findings: Manufacturing methods and their effects
+- Use in review: Manufacturing considerations section
+
+15. composite_testing (Adams & Adams, 2004)
+- Key focus: Testing methods for composites
+- Relevance: Important for validation
+- Key findings: Standard testing procedures
+- Use in review: Testing and validation section
+
+Note: These references are selected to cover:
+1. Historical context and evolution
+2. Material properties and characteristics
+3. Hybrid composite behavior
+4. Computer modeling and simulation
+5. Bicycle-specific applications
+6. Environmental considerations
+7. Manufacturing and testing
+8. Future directions and challenges
+
+Each paper contributes to different aspects of the project, from material selection to implementation and validation. 

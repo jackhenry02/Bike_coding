@@ -1,8 +1,0 @@
-Introductory Help
-
-CCSM can be used to predict laminate elastic properties, deformation due to arbitrary loading, and laminate failure. In this form elastic properties are entered. Where you want to predict deformation or failure, these forms will need further data. The program uses classical laminate theory to predict the laminate elastic properties, stresses and strains. Various failure options are available, including notched compressive failure. A user-expandable database is incorporated. 
-
-Boxes in which to input data have a white background.
-
-Further help can be obtained from the ? buttons and from the manual. Details of the program authors are included using the About button.
-

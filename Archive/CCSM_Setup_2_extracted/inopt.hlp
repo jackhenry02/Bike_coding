@@ -1,0 +1,9 @@
+Materials data input options
+
+There are two choices for defining the elastic data for each ply. 
+
+The Engineering option requires conventional stiffness moduli for the lamina, such as might be obtained from tests on a unidirectional laminate. The stiffnesses are defined in local co-ordinates (i.e. along and transverse to the fibre direction), so do not change with the ply orientation.
+
+The Micromechanics option requires data stiffness about the constituent fibres and matrix, and the fibre volume fraction. These are used to estimate laminate properties using standard equations, as detailed in the CCSM manual and RF Gibson, Principles of composite material mechanics, 1994.
+
+

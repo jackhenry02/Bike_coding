@@ -1,0 +1,7 @@
+Ply editing
+
+Use the ply arrangement box to navigate through the plies, using either the mouse or arrow keys. The saved material properties for the highlighted ply are displayed. Several plies can be selected for cutting or deleting. Plies are pasted above the selected ply. If strength properties have already been defined for the laminate, these properties are associated with each ply and are cut and paste with the plies.
+
+The total number of plies is automatically updated when plies are cut or pasted. The number of plies can also be changed by re-entering a number in the Total Number of Plies box.
+
+

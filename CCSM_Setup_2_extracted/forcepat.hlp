@@ -1,9 +1,0 @@
-Force Pattern applied to laminate
-
-Conventional Failure Criteria
-The pattern of forces or moments applied to the laminate should be input. These are then scaled to find first failure. The failure loads are printed at the bottom of the form. The ply grid identifies the critical plies. 
-
-BFS Failure Criteria
-The failure pattern is input by the user, as above. Bending moments are not allowed for in the theory - these are assumed to be zero. The effects of shear and transverse loading are treated using a simple model of microbuckling. This may not be accurate for the hole calculations. The effects of strain-hardening are not modelled. Refer to 'Microbuckle initiation in fibre composites under multiaxial loading' by JY Shu and NA Fleck, Proc Roy Soc A453, 2063-2083, 1997  and 'Microbuckle initiation from a hole and from the free edge of a fibre composite' by NA Fleck, D Liu and JY Shu, submitted to Int J Solids and Structures, 1998 for discussions of these effects.
-
-

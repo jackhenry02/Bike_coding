@@ -1,0 +1,7 @@
+Laminate Elastic Properties
+
+Laminate stiffnesses Ex etc have the normal definitions for an elastic orthotropic laminate, when the laminate is symmetric. 
+
+For unsymmetric matrices, due to coupling between different loads, it is not possible to define stiffnesses such as Ex for the laminate in the normal sense. However, the inverse of the appropriate element of the compliance matrix will give an effective stiffness where there is only loading in the relevant direction (e.g. 1/Sxx) gives an effective value for Ex. These are the values that are quoted. 
+
+E' is an effective elastic modulus, for use in the relation GE=K*K, where mode one loading is considered and a crack runs in the y direction.

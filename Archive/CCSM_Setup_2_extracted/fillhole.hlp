@@ -1,0 +1,7 @@
+Filled Holes  
+
+A simple strengthening factor of 1.21  is applied for filled holes, as suggested by BAe data 
+i.e. strength of filled hole / strength of open hole = 1.21
+See "A method for the production of carpet plots for notched compressive strength of CFRP multi-directional laminates", by C Soutis and EC Edge, Proc Inst Mech Engrs, Vol 211 pp 251-261 (1997) for further details.
+
+The length of the microbuckle at peak load may be estimated from the equivalent calculation for an open hole.

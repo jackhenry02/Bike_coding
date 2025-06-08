@@ -1,0 +1,12 @@
+Using the elastic form
+
+The laminate geometry and lamina elastic properties are input in this form. Boxes in which to input data have a white background.
+
+First enter the number of plies in the laminate. Click on the appropriate option button if the laminate is unsymmetric. Then enter the elastic properties, thickness and ply angle of the first ply (see help button for details of the required data). The database may be used here. It will be assumed by default that all plies have the same properties and ply thickness, although this can subsequently be overwritten by typing in data for each ply and saving the ply data. A composite name and comments can be entered at any time.
+
+For each ply, the ply direction must be typed in and saved using the Save Ply Data button. When all the ply data have been saved, the laminate properties are calculated using the Calculate button. 
+
+The Ply Input and Ply Edit tools can be used to enter and change the laminate quickly. Do not forget to use the Save Ply Data button for each ply. Saved data for each ply can be displayed using the Ply Arrangement table (use the mouse or arrow keys to navigate through this table).
+
+The Change All buttons change either the thickness of the material properties of all plies to the current values in the input data boxes.
+

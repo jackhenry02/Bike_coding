@@ -1,6 +1,0 @@
-Using the deformation form
-
-In this form the deformation of the laminate, and stresses and strains in the individual plies of the laminate, are calculated. You must enter the load applied to the laminate either in terms of applied line loads and bending moments, or in terms of applied (micro)strains and curvatures. Data is displayed either in the global (x-y) coordinates of the laminate or in terms of the local (1-2) coordinates running along the fibre direction for each ply.
-
-Use the ply arrangement table to display data for each of the plies, navigating using the mouse or arrow keys.
-

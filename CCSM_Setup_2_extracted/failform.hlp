@@ -1,7 +1,0 @@
-Using the failure form
-
-In this form the failure of the laminate is predicted. As well as conventional failure criteria, the Budiansky-Fleck-Soutis criteria for compressive failure of unnotched and notched laminates is included. 
-
-After choosing your failure criterion, ply data should first be entered in the appropriate data boxes. Where the failure strengths are the same for each ply, click the Save Data - All Plies button. For a laminate made up of different materials, individual strength data for each ply can be entered using the Save Data - This Ply button. The strength of each ply can be examined by clicking and navigating through the ply arrangement table.
-
-For the BFS compressive failure criterion, the variation of notched strength with plate geometry can be calculated. Further information on the BFS criterion are available with the ? help buttons and in the manual. 

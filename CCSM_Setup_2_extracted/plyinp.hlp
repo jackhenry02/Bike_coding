@@ -1,6 +1,0 @@
-Inserting ply properties
-
-Fill in the relevant ply details and materials properties for a ply and click "Save ply data" to save this data. Subsequent plies with different ply orientations can be entered using the Ply Input set of buttons, to input the angle of the Previous, Current, and Next ply. Data for each ply must be saved using the Save Ply Data button (this will be the default for the Enter key after clicking a Ply Input button). The database button accesses a database of lamina elastic properties. When all ply data has been entered, click on the Calculate button.
-
-Use the ply arrangement box to navigate through the plies, either by clicking on the relevant ply or using cursor keys, to see the saved material properties.
-

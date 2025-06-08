@@ -2,6 +2,7 @@
 
 # Exit if any command fails
 #set -e
+deactivate
 
 # Create virtual environment
 python -m venv .bike_venv

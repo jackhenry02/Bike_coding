@@ -1,0 +1,3 @@
+Unnotched strength input options
+
+The unnotched strength can be predicted based on either a micromechanics model, using material data such as matrix shear strength, or based on data for each lamina, such as might be obtained from unidirectional tests. This laminate strength is then used to predict the notched strength. Alternatively, the laminate strength can be input directly, rather than predicted in this way. 

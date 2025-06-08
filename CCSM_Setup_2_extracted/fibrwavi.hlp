@@ -1,8 +1,0 @@
-Fibre Waviness
-
-The Budiansky-Fleck model of unnotched strength assumes plastic microbuckling. Initiation of failure is controlled by fibre imperfections in the form of fibre waviness. Existing models use a single representative value of fibre waviness, typically around 2-3 degrees for CFRP laminates.
-Further work aims to model the more complex problem with distributions of waviness throughout the composite.
-
-Refer to the review paper "Compressive Failure of Fibre Composites" by NA Fleck, Advances in Applied Mechanics, Vol. 34, Academic Press, ed. JW Hutchinson and TY Wu, pp 43-118 (1997), for a further discussion, and practical ways of estimating fibre waviness.
-
-
