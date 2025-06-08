@@ -13,7 +13,7 @@ import numpy as np
 import plotly.io as pio
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-from .tensor import Tensor
+from tensor import Tensor
 
 sin = np.sin
 cos = np.cos

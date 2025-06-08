@@ -8,7 +8,7 @@ Module that contains the linear elastic stiffness classes of Isotropy and Transv
 """
 
 import numpy as np
-from .tensor import Tensor
+from tensor import Tensor
 
 
 class Elasticity(Tensor):

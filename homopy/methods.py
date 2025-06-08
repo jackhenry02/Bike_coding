@@ -15,7 +15,7 @@ matrix for the Halpin-Tsai homogenization is based on the laminate analogy appro
 import numpy as np
 import matplotlib.pyplot as plt
 import warnings
-from homopy.tensor import Tensor
+from tensor import Tensor
 
 sin = np.sin
 cos = np.cos

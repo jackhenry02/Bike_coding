@@ -138,3 +138,7 @@ activate_env.bat
 
 # images build
 .pptx
+
+.bike_venv/
+__pycache__/
+.ipynb_checkpoints/
