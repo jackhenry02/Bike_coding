@@ -1,0 +1,12 @@
+Entering and saving strength properties
+
+All plies of the same material.
+Fill in the input boxes, either by hand or using the database, and click the Save Data - All Plies button
+
+Different properties for each ply.
+Use the ply arrangement box to navigate through the plies, either by clicking on the relevant ply or using cursor keys. The strength boxes are filled with the stored ply properties for the highlighted ply. Change the input boxes, either by hand or using the database and use Save Data - This Ply to change the properties of the highlighted ply.
+
+Ply editing
+Strength properties are associated with each ply and are cut and paste with the plies in the elastic properties window.
+
+

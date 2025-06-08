@@ -18,8 +18,10 @@ class ForkSimulationGUI:
         
         # Create tabs
         self.layup_tab = ttk.Frame(self.notebook)
+        self.manual_tab = ttk.Frame(self.notebook)
         self.simulation_tab = ttk.Frame(self.notebook)
         self.notebook.add(self.layup_tab, text='Composite Layup')
+        self.notebook.add(self.manual_tab, text='Manual Composite Entry')
         self.notebook.add(self.simulation_tab, text='Fork Simulation')
         
         self.setup_layup_tab()

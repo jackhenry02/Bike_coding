@@ -1,0 +1,7 @@
+Microbuckle toughness
+
+The Fleck-Soutis model of notched strength assumes a microbuckle and associated delamination damage grows from the edge of a sharp notch or hole. The resistance to damage can be modelled using the unnotched strength and a compressive 'fracture toughness'. The fracture toughness Kc is measured using centre-notched coupon specimens. Typical values for CFRP composites are in the range 40 - 50 Mpa sqrt m.
+
+Refer to "Compressive failure of notched carbon fibre composites" by C Soutis, PT Curtis and NA Fleck, Proc R. Soc. London A (1993), Vol. 440, pp 241-256 for a detailed description of the method, to the review paper "Compressive Failure of Fibre Composites" by NA Fleck, Advances in Applied Mechanics, Vol. 34, Academic Press, ed. JW Hutchinson and TY Wu, pp 43-118 (1997), for further discussion, and to "Microbuckle propagation in fibre composites" by MPF Sutcliffe and NA Fleck, Acta Metallurgica and Materialia, 1996, pp 921-932  for theoretical predictions of the toughness.
+
+

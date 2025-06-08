@@ -1,10 +1,12 @@
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import ttk, messagebox, filedialog
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from composite_layup import PlyProperties, CompositeLayup, create_symmetric_layup
 from fork_simulation import MaterialProperties, ForkGeometry, ForkSimulation
+import json
+import os
 
 class PlyPropertiesFrame(ttk.LabelFrame):
     def __init__(self, parent, ply_number, *args, **kwargs):
@@ -38,6 +40,46 @@ class PlyPropertiesFrame(ttk.LabelFrame):
             orientation=self.vars['orientation'].get()
         )
 
+class MaterialPropertiesFrame(ttk.LabelFrame):
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, text="Material Properties", *args, **kwargs)
+        
+        # Material properties inputs
+        properties = [
+            ("Name:", "name", ""),
+            ("E_axial (GPa):", "e_axial", 120),
+            ("E_transverse (GPa):", "e_transverse", 8),
+            ("G (GPa):", "g", 4.5),
+            ("nu:", "nu", 0.3),
+            ("Density (kg/m³):", "rho", 1600),
+            ("Cost per kg (£):", "cost", 50),
+            ("Damping ratio:", "damping", 0.01)
+        ]
+        
+        self.vars = {}
+        for i, (label, name, default) in enumerate(properties):
+            ttk.Label(self, text=label).grid(row=i, column=0, padx=5, pady=2, sticky='e')
+            if name == "name":
+                var = tk.StringVar(value=default)
+            else:
+                var = tk.DoubleVar(value=default)
+            self.vars[name] = var
+            ttk.Entry(self, textvariable=var, width=10).grid(row=i, column=1, padx=5, pady=2)
+        
+        # Description field
+        ttk.Label(self, text="Description:").grid(row=len(properties), column=0, padx=5, pady=2, sticky='e')
+        self.description_var = tk.StringVar()
+        ttk.Entry(self, textvariable=self.description_var, width=30).grid(
+            row=len(properties), column=1, padx=5, pady=2)
+    
+    def get_properties(self) -> dict:
+        return {name: var.get() for name, var in self.vars.items()}
+    
+    def set_properties(self, properties: dict):
+        for name, value in properties.items():
+            if name in self.vars:
+                self.vars[name].set(value)
+
 class ForkSimulationGUI:
     def __init__(self, root):
         self.root = root
@@ -51,16 +93,21 @@ class ForkSimulationGUI:
         # Create tabs
         self.layup_tab = ttk.Frame(self.notebook)
         self.simulation_tab = ttk.Frame(self.notebook)
+        self.materials_tab = ttk.Frame(self.notebook)
         self.notebook.add(self.layup_tab, text='Composite Layup')
         self.notebook.add(self.simulation_tab, text='Fork Simulation')
+        self.notebook.add(self.materials_tab, text='Material Properties')
         
         self.setup_layup_tab()
         self.setup_simulation_tab()
+        self.setup_materials_tab()
         
         # Store current layup and simulation
         self.current_layup = None
         self.current_simulation = None
         self.ply_frames = []
+        self.material_properties = {}
+        self.load_material_properties()
         
     def setup_layup_tab(self):
         # Top frame for layup configuration
@@ -339,6 +386,112 @@ class ForkSimulationGUI:
             
         except Exception as e:
             messagebox.showerror("Error", f"Failed to run vibration analysis: {str(e)}")
+
+    def setup_materials_tab(self):
+        # Left frame for material input
+        left_frame = ttk.Frame(self.materials_tab)
+        left_frame.pack(side='left', fill='both', expand=True, padx=5, pady=5)
+        
+        # Material properties input
+        self.material_frame = MaterialPropertiesFrame(left_frame)
+        self.material_frame.pack(fill='x', padx=5, pady=5)
+        
+        # Buttons frame
+        button_frame = ttk.Frame(left_frame)
+        button_frame.pack(fill='x', padx=5, pady=5)
+        
+        ttk.Button(button_frame, text="Save Material", 
+                  command=self.save_material).pack(side='left', padx=5)
+        ttk.Button(button_frame, text="Delete Material", 
+                  command=self.delete_material).pack(side='left', padx=5)
+        
+        # Right frame for material list
+        right_frame = ttk.LabelFrame(self.materials_tab, text="Saved Materials")
+        right_frame.pack(side='right', fill='both', expand=True, padx=5, pady=5)
+        
+        # Material list
+        self.material_listbox = tk.Listbox(right_frame, height=10)
+        self.material_listbox.pack(fill='both', expand=True, padx=5, pady=5)
+        self.material_listbox.bind('<<ListboxSelect>>', self.on_material_select)
+        
+        # Description display
+        self.description_text = tk.Text(right_frame, height=5, width=40)
+        self.description_text.pack(fill='x', padx=5, pady=5)
+        
+        # Update material list
+        self.update_material_list()
+    
+    def save_material(self):
+        properties = self.material_frame.get_properties()
+        name = properties['name']
+        
+        if not name:
+            messagebox.showerror("Error", "Please enter a material name")
+            return
+        
+        # Add description to properties
+        properties['description'] = self.material_frame.description_var.get()
+        
+        # Save to dictionary
+        self.material_properties[name] = properties
+        
+        # Save to file
+        self.save_material_properties()
+        
+        # Update list
+        self.update_material_list()
+        messagebox.showinfo("Success", f"Material '{name}' saved successfully")
+    
+    def delete_material(self):
+        selection = self.material_listbox.curselection()
+        if not selection:
+            messagebox.showerror("Error", "Please select a material to delete")
+            return
+        
+        name = self.material_listbox.get(selection[0])
+        if messagebox.askyesno("Confirm", f"Delete material '{name}'?"):
+            del self.material_properties[name]
+            self.save_material_properties()
+            self.update_material_list()
+            self.material_frame.set_properties({})
+            self.material_frame.description_var.set("")
+    
+    def on_material_select(self, event):
+        selection = self.material_listbox.curselection()
+        if not selection:
+            return
+        
+        name = self.material_listbox.get(selection[0])
+        properties = self.material_properties[name]
+        
+        # Update material frame
+        self.material_frame.set_properties(properties)
+        self.material_frame.description_var.set(properties.get('description', ''))
+        
+        # Update description text
+        self.description_text.delete(1.0, tk.END)
+        self.description_text.insert(tk.END, properties.get('description', ''))
+    
+    def update_material_list(self):
+        self.material_listbox.delete(0, tk.END)
+        for name in sorted(self.material_properties.keys()):
+            self.material_listbox.insert(tk.END, name)
+    
+    def save_material_properties(self):
+        try:
+            with open('material_properties.json', 'w') as f:
+                json.dump(self.material_properties, f, indent=4)
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to save material properties: {str(e)}")
+    
+    def load_material_properties(self):
+        try:
+            if os.path.exists('material_properties.json'):
+                with open('material_properties.json', 'r') as f:
+                    self.material_properties = json.load(f)
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to load material properties: {str(e)}")
+            self.material_properties = {}
 
 if __name__ == "__main__":
     root = tk.Tk()

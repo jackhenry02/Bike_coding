@@ -1,0 +1,8 @@
+Countersunk Holes  
+
+A simple knockdown factor of 0.85  is applied for countersunk holes, as suggested by (limited) BAe data 
+i.e. strength of countersunk hole / strength of open hole = 0.85
+See "A method for the production of carpet plots for notched compressive strength of CFRP multi-directional laminates", by C Soutis and EC Edge, Proc Inst Mech Engnrs, Vol 211, p251-261(1997) for further details.
+
+The length of the microbuckle at peak load may be estimated from the equivalent calculation for an open hole.
+

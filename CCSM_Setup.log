@@ -1,0 +1,28 @@
+
+==================================================
+Command: wine CCSM_Setup.exe
+Started at: 2025-06-08 12:17:05
+==================================================
+Application could not be started, or no application associated with the specified file.
+ShellExecuteEx failed: File not found.
+
+
+==================================================
+Completed at: 2025-06-08 12:17:05
+Duration: 0.42 seconds
+Exit code: 1
+==================================================
+
+==================================================
+Command: wine CCSM_Setup.exe
+Started at: 2025-06-08 12:17:18
+==================================================
+Application could not be started, or no application associated with the specified file.
+ShellExecuteEx failed: File not found.
+
+
+==================================================
+Completed at: 2025-06-08 12:17:18
+Duration: 0.37 seconds
+Exit code: 1
+==================================================
