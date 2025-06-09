@@ -26,6 +26,37 @@ class MaterialType(Enum):
         'G12': 2.1,
         'density': 1440
     }
+    resin = {
+        'E11': 3.1,      # Epoxy resin
+        'E22': 3.1,
+        'nu12': 0.35,
+        'G12': 1.2,
+        'density': 1200,
+        'cost': 5         # $/m²
+    }
+    Biotex_flax_UD = {
+        'E11': 27.4,      
+        'E22': 4,     # Uknown so put as same as others
+        'nu12': 0.3,   # Uknown so put as same as others
+        'G12': 1.4,
+        'density': 1040,
+    }
+    Technillin_flax_UD = { # 50% fibre by weight in epoxy resin
+        'E11': 35,      
+        'E22': 4,     # Uknown so put as same as others
+        'nu12': 0.3,   # Uknown so put as same as others
+        'G12': 1.4,
+        'density': 1040,
+    }
+    Flax_generic = {
+        'E11': 30,      
+        'E22': 4,     # Uknown so put as same as others
+        'nu12': 0.3,   # Uknown so put as same as others
+        'G12': 1.4,
+        'density': 1300,
+
+    }
+
 
 
 @dataclass
